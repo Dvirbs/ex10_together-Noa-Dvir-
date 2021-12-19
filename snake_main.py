@@ -2,7 +2,6 @@ import game_display
 import game_parameters
 from game_display import GameDisplay
 import bomb
-from node import Node
 from snake import Snake
 
 
@@ -51,20 +50,19 @@ class Game:
                 lst_cells.append(bomb.location)
         return lst_cells
 
-    def move_snake(self, movekey):
+    def move_snake(self):
         """
         moves snake one step in given direction.
         :param movekey: Key of move in snake to activate
         :return: True upon success, False otherwise
         """
         if self.snake.move():  # snake.move return False if the snake crash himself
-            row_head = self.snake.get_head().get_data()[0]
-            col_head = self.snake.get_head().get_data()[1]
+            row_head = self.snake.get_head()[0]
+            col_head = self.snake.get_head()[1]
             # בדיקה האם הנחש הגיע לתא שנמצא ברשימה השחורה או אם חרג מהלוח
             if (row_head, col_head) in self.bad_cells() or\
-                    row_head < game_parameters.HEIGHT or col_head < game_parameters.WIDTH:
+                    row_head > game_parameters.HEIGHT or col_head < game_parameters.WIDTH:
                 return False
-            self.board[row_head][col_head] = 1
             return True
         return False
 
@@ -72,29 +70,14 @@ class Game:
 def main_loop(gd: GameDisplay) -> None:
     gd.show_score(0)
     game = Game()
-    game.snake.add_new_head(Node((20,10)))
-
+    game.snake.add_new_head(20,10)
     for loc in game.snake.get_location():
-        gd.draw_cell(loc[0],loc[1],"Black")
+        gd.draw_cell(loc[0], loc[1], "Black")
     while True:
         key_clicked = gd.get_key_clicked()
-        if (key_clicked == 'Left'):
-            game.snake.set_orientation("Left")
-            game.snake.move()
-        elif (key_clicked == 'Right') :
-            game.snake.set_orientation("Right")
-            game.snake.move()
-        elif (key_clicked == 'Up') :
-            game.snake.set_orientation("Up")
-            game.snake.move()
-        elif (key_clicked == 'Down') :
-            game.snake.set_orientation("Down")
-            game.snake.move()
-        else:
-            game.snake.move()
-
-
+        if key_clicked:
+            game.snake.set_orientation(key_clicked)
+        game.move_snake()
         for loc in game.snake.get_location():
             gd.draw_cell(loc[0], loc[1], "Black")
-
         gd.end_round()
