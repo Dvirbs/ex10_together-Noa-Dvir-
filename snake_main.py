@@ -77,7 +77,7 @@ class Game:
 
 def main_loop(gd: GameDisplay) -> None:
     gd.show_score(0)
-    x, y = 10, 10
+    x, y = 11, 11
     while True:
         key_clicked = gd.get_key_clicked()
         if (key_clicked == 'Left') and (x > 0):
@@ -87,4 +87,3 @@ def main_loop(gd: GameDisplay) -> None:
         gd.draw_cell(x, y, "red")
         gd.draw_cell(10, 11, "Black")
         gd.end_round()
-        
