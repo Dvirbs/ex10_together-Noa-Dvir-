@@ -1,46 +1,50 @@
 import game_parameters
+from typing import *
+
 class Bomb:
     COLOR = "red"
 
-    def __init__(self, location, radius, time):
-        self.location = location
-        self.radius = radius
-        self.time = time
+    def __init__(self):
+        self.__location = None
+        self.__radius = None
+        self.__time = None
 
-    def coordinates_by_radius(self, radius):
+    def get_location(self):
+        return self.__location
+
+    def set_bomb(self):
+        x, y, radius, time = game_parameters.get_random_bomb_data()  # הכנסת המידע לתוך רשימה
+        self.__location = x, y
+        self.__radius = radius
+        self.__time = 1
+
+    def blast_cords(self):
+        radius = self.get_time()
         if radius == 0:
-            return self.location
+            return [(self.__location[0], self.__location[1])]
         if radius < 0:
-            radius = -1*radius
-        v = [(self.location[0], self.location[1] + radius), (self.location[0], self.location[1] - radius),
-             (self.location[0] + radius, self.location[1]), (self.location[0] - radius, self.location[1])]
+            radius = -1 * radius
+        blast_cords_list: List[Tuple] = [(self.__location[0], self.__location[1] + radius),
+                                         (self.__location[0], self.__location[1] - radius),
+                                         (self.__location[0] + radius, self.__location[1]),
+                                         (self.__location[0] - radius, self.__location[1])]
         j = 1
-        for i in range(self.location[0] - radius + 1, self.location[0], 1):
-            v.append((i, self.location[1] + j))
-            v.append((i, self.location[1] - j))
+        for i in range(self.__location[0] - radius + 1, self.__location[0], 1):
+            blast_cords_list.append((i, self.__location[1] + j))
+            blast_cords_list.append((i, self.__location[1] - j))
             j += 1
         j = 1
-        for i in range(self.location[0] + radius - 1, self.location[0], -1):
-            v.append((i, self.location[1] + j))
-            v.append((i, self.location[1] - j))
+        for i in range(self.__location[0] + radius - 1, self.__location[0], -1):
+            blast_cords_list.append((i, self.__location[1] + j))
+            blast_cords_list.append((i, self.__location[1] - j))
             j += 1
-        return v
+        return blast_cords_list
 
-    def update_time(self, time):
-        """
-        :param crds_loc: A tuple representing the coords of the required location.
-        :return: True upon success, False otherwise
-        """
-        self.time = time
+    def time_getting_smaller(self) -> None:
+        self.__time -= 1
 
+    def get_time(self) -> int:
+        return self.__time
 
-
-
-b = Bomb((4,3), 4, 2)
-print(b.coordinates_by_radius(3))
-
-
-
-
-
-
+    def get_redius(self) -> int:
+        return self.__radius
